@@ -1,20 +1,31 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 
-#include "core/ScreenManager.h"
+#include "core/runtime/Runtime.h"
 
 #include "screens/HomeScreen.h"
 #include "screens/SpotifyScreen.h"
 
 TFT_eSPI tft = TFT_eSPI();
 
-ScreenManager screenManager;
+Runtime runtime(&tft);
 
 HomeScreen homeScreen;
 SpotifyScreen spotifyScreen;
 
 unsigned long lastSwitch = 0;
+
 bool spotifyActive = false;
+
+void handleSpotify(Event event) {
+
+    runtime.screenManager.setScreen(&spotifyScreen);
+}
+
+void handleHome(Event event) {
+
+    runtime.screenManager.setScreen(&homeScreen);
+}
 
 void setup() {
 
@@ -24,27 +35,46 @@ void setup() {
 
     tft.setRotation(3);
 
-    screenManager.setScreen(&homeScreen);
+    runtime.begin();
+
+    runtime.eventBus.on(
+        "screen.spotify",
+        handleSpotify
+    );
+
+    runtime.eventBus.on(
+        "screen.home",
+        handleHome
+    );
+
+    runtime.screenManager.setScreen(&homeScreen);
 }
 
 void loop() {
 
-    screenManager.update();
+    runtime.loop();
 
-    screenManager.render(tft);
-
-    if (millis() - lastSwitch > 30000) {
+    if (millis() - lastSwitch > 3000) {
 
         lastSwitch = millis();
 
         spotifyActive = !spotifyActive;
 
         if (spotifyActive) {
-            screenManager.setScreen(&spotifyScreen);
+
+            runtime.eventBus.emit({
+                "screen.spotify",
+                ""
+            });
+
         } else {
-            screenManager.setScreen(&homeScreen);
+
+            runtime.eventBus.emit({
+                "screen.home",
+                ""
+            });
         }
     }
 
-    delay(360);
+    delay(16);
 }

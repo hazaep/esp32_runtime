@@ -3,6 +3,8 @@
 #include <Arduino.h>
 
 struct Event {
-    String name;
-    String data;
+
+    String type;
+
+    String payload;
 };

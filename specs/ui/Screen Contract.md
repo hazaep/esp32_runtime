@@ -1,9 +1,18 @@
+# Screen Contract v0.1
+
+## Screen.h
+
+---
+
+# `src/core/screens/Screen.h`
+
+```cpp
 #pragma once
 
-#include <Arduino.h>
 #include <TFT_eSPI.h>
 
 class Screen {
+
 public:
 
     virtual void onEnter() {}
@@ -14,3 +23,4 @@ public:
 
     virtual void render(TFT_eSPI& tft) {}
 };
+```

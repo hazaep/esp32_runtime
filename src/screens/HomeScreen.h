@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/Screen.h"
+#include "../core/screens/Screen.h"
 
 class HomeScreen : public Screen {
 

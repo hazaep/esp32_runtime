@@ -3,8 +3,10 @@
 #include "Screen.h"
 
 class ScreenManager {
+
 private:
-    Screen* currentScreen = nullptr;
+
+    Screen* activeScreen = nullptr;
 
 public:
 
