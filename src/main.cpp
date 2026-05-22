@@ -1,18 +1,50 @@
 #include <Arduino.h>
+#include <TFT_eSPI.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#include "core/ScreenManager.h"
+
+#include "screens/HomeScreen.h"
+#include "screens/SpotifyScreen.h"
+
+TFT_eSPI tft = TFT_eSPI();
+
+ScreenManager screenManager;
+
+HomeScreen homeScreen;
+SpotifyScreen spotifyScreen;
+
+unsigned long lastSwitch = 0;
+bool spotifyActive = false;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+
+    Serial.begin(115200);
+
+    tft.init();
+
+    tft.setRotation(3);
+
+    screenManager.setScreen(&homeScreen);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    screenManager.update();
+
+    screenManager.render(tft);
+
+    if (millis() - lastSwitch > 30000) {
+
+        lastSwitch = millis();
+
+        spotifyActive = !spotifyActive;
+
+        if (spotifyActive) {
+            screenManager.setScreen(&spotifyScreen);
+        } else {
+            screenManager.setScreen(&homeScreen);
+        }
+    }
+
+    delay(360);
 }
