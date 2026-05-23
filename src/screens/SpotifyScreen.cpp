@@ -7,9 +7,10 @@ void SpotifyScreen::onEnter() {
 
 void SpotifyScreen::render(TFT_eSPI& tft) {
 
-    tft.fillScreen(TFT_BLACK);
+    tft.fillScreen(TFT_PINK);
 
-    tft.setTextColor(TFT_CYAN);
+    tft.setTextColor(TFT_BLACK);
 
-    tft.drawCentreString("SPOTIFY", 160, 120, 4);
+    tft.drawCentreString("SPOTIFY", 160, 120, 2);
+
 }
