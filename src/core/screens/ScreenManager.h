@@ -12,7 +12,7 @@ public:
 
     void setScreen(Screen* screen);
 
-    void update();
+    Screen* getActiveScreen();
 
-    void render(TFT_eSPI& tft);
+    void render(TFT_eSPI& display);
 };

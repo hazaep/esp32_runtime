@@ -13,14 +13,27 @@
 
 class Screen {
 
+protected:
+    bool dirty = true;
+
 public:
-
+    virtual ~Screen() {}
     virtual void onEnter() {}
-
     virtual void onExit() {}
+    virtual void render(
+        TFT_eSPI& display
+    ) {}
+    
+    void invalidate() {
+        dirty = true;
+    }
 
-    virtual void update() {}
+    bool isDirty() {
+        return dirty;
+    }
 
-    virtual void render(TFT_eSPI& tft) {}
+    void validate() {
+        dirty = false;
+    }
 };
 ```

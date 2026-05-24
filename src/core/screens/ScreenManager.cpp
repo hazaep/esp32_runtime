@@ -1,28 +1,39 @@
 #include "ScreenManager.h"
 
-void ScreenManager::setScreen(Screen* screen) {
+void ScreenManager::setScreen(
+    Screen* screen
+) {
 
-    if (activeScreen != nullptr) {
+    if(activeScreen) {
+
         activeScreen->onExit();
     }
 
     activeScreen = screen;
 
-    if (activeScreen != nullptr) {
+    if(activeScreen) {
+
+        activeScreen->invalidate();
         activeScreen->onEnter();
     }
 }
 
-void ScreenManager::update() {
+Screen* ScreenManager::getActiveScreen() {
 
-    if (activeScreen != nullptr) {
-        activeScreen->update();
-    }
+    return activeScreen;
 }
 
-void ScreenManager::render(TFT_eSPI& tft) {
+void ScreenManager::render(
+    TFT_eSPI& display
+) {
 
-    if (activeScreen != nullptr) {
-        activeScreen->render(tft);
-    }
+    if(!activeScreen)
+        return;
+
+    if(!activeScreen->isDirty())
+        return;
+
+    activeScreen->render(display);
+
+    activeScreen->validate();
 }

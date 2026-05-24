@@ -1,18 +1,21 @@
 #include "Runtime.h"
 
-Runtime::Runtime(TFT_eSPI* display) {
-
-    tft = display;
+Runtime::Runtime(
+    TFT_eSPI* display
+) {
+    this->display = display;
 }
 
 void Runtime::begin() {
 
-    Serial.println("[RUNTIME] Begin");
+    Serial.println(
+        "[RUNTIME] START"
+    );
 }
 
 void Runtime::loop() {
 
-    screenManager.update();
-
-    screenManager.render(*tft);
+    screenManager.render(
+        *display
+    );
 }

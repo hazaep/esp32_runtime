@@ -1,7 +1,9 @@
 #include "EventBus.h"
 
-void EventBus::on(String eventType, EventCallback callback) {
-
+void EventBus::on(
+    String eventType,
+    EventCallback callback
+) {
     listeners[listenerCount++] = {
         eventType,
         callback
@@ -10,12 +12,14 @@ void EventBus::on(String eventType, EventCallback callback) {
 
 void EventBus::emit(Event event) {
 
-    Serial.print("[EVENT] ");
-    Serial.println(event.type);
+    Serial.printf(
+        "[EVENT] %s\n",
+        event.type.c_str()
+    );
 
-    for (int i = 0; i < listenerCount; i++) {
+    for(int i = 0; i < listenerCount; i++) {
 
-        if (listeners[i].eventType == event.type) {
+        if(listeners[i].eventType == event.type) {
 
             listeners[i].callback(event);
         }

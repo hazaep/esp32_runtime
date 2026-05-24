@@ -3,78 +3,96 @@
 
 #include "core/runtime/Runtime.h"
 
-#include "screens/HomeScreen.h"
 #include "screens/SpotifyScreen.h"
 
-TFT_eSPI tft = TFT_eSPI();
+TFT_eSPI display;
 
-Runtime runtime(&tft);
+Runtime runtime(&display);
 
-HomeScreen homeScreen;
-SpotifyScreen spotifyScreen;
+SpotifyScreen spotifyScreen(
+    &runtime
+);
 
-unsigned long lastSwitch = 0;
+void handleToggle(Event event) {
 
-bool spotifyActive = false;
+    auto& spotify =
+        runtime.stateStore.spotify();
 
-void handleSpotify(Event event) {
+    spotify.playing =
+        !spotify.playing;
 
-    runtime.screenManager.setScreen(&spotifyScreen);
-}
+    runtime
+        .screenManager
+        .getActiveScreen()
+        ->invalidate();
 
-void handleHome(Event event) {
-
-    runtime.screenManager.setScreen(&homeScreen);
+    Serial.printf(
+        "Playing: %s\n",
+        spotify.playing
+            ? "true"
+            : "false"
+    );
 }
 
 void setup() {
 
     Serial.begin(115200);
 
-    tft.init();
+    display.init();
 
-    tft.setRotation(3);
+    display.setRotation(3);
+
+    uint16_t calData[5] = {
+        311,
+        3578,
+        246,
+        3554,
+        1
+    };
+
+    display.setTouch(
+        calData
+    );
 
     runtime.begin();
 
     runtime.eventBus.on(
-        "screen.spotify",
-        handleSpotify
+        "spotify.toggle",
+        handleToggle
     );
 
-    runtime.eventBus.on(
-        "screen.home",
-        handleHome
-    );
-
-    runtime.screenManager.setScreen(&homeScreen);
+    runtime.screenManager
+        .setScreen(
+            &spotifyScreen
+        );
 }
 
 void loop() {
 
-    runtime.loop();
+    uint16_t x, y;
 
-    if (millis() - lastSwitch > 3000) {
+    if(
+        display.getTouch(
+            &x,
+            &y
+        )
+    ) {
 
-        lastSwitch = millis();
-
-        spotifyActive = !spotifyActive;
-
-        if (spotifyActive) {
+        if(
+            x > 80 &&
+            x < 240 &&
+            y > 150 &&
+            y < 210
+        ) {
 
             runtime.eventBus.emit({
-                "screen.spotify",
+                "spotify.toggle",
                 ""
             });
 
-        } else {
-
-            runtime.eventBus.emit({
-                "screen.home",
-                ""
-            });
+            delay(200);
         }
     }
 
-    delay(16);
+    runtime.loop();
 }
